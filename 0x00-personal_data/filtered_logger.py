@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-''' Logger '''
+""" Logger """
 import re
 import logging
 from typing import List
@@ -22,13 +22,13 @@ class RedactingFormatter(logging.Formatter):
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
-        '''filters values from the log record'''
+        """filters values from the log record"""
         return filter_datum(self.fields, self.REDACTION,
                             super().format(record), self.SEPARATOR)
 
 
 def get_db() -> connection.MySQLConnection:
-    '''returns a MySQL connector'''
+    """returns a MySQL connector"""
     username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
     db_host = environ.get("PERSONAL_DATA_DB_HOST", "localhost")
@@ -42,7 +42,7 @@ def get_db() -> connection.MySQLConnection:
 
 
 def get_logger() -> logging.Logger:
-    '''self descriptive'''
+    """self descriptive"""
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -56,7 +56,7 @@ def get_logger() -> logging.Logger:
 
 def filter_datum(fields: List[str], redaction: str, message: str,
                  separator: str) -> str:
-    '''returns the log message obfuscated'''
+    """returns the log message obfuscated"""
     for field in fields:
         message = re.sub(f'{field}=(.*?){separator}',
                          f'{field}={redaction}{separator}', message)
@@ -64,7 +64,7 @@ def filter_datum(fields: List[str], redaction: str, message: str,
 
 
 def main() -> None:
-    '''driver function'''
+    """driver function"""
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users;")
@@ -75,7 +75,7 @@ def main() -> None:
     for row in cursor:
         info_answer = ''
         for f, p in zip(row, headers):
-            info_answer += f'{p}={(f)}; '
+            info_answer += f'{p}={f}; '
         logger.info(info_answer)
 
     cursor.close()
