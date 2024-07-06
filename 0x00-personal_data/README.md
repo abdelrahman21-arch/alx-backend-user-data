@@ -1,0 +1,1 @@
+- Encrpyting password and authenticating users.
